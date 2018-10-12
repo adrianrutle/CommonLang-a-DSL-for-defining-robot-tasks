@@ -1,0 +1,127 @@
+Dear chair and reviewers
+
+First of all we would like to thank you very much for your efforts reviewing the paper and your valuable comments!
+We have tried our best (and considering the available time and space) to respond to all of your comments in this letter, and we refer to the pages and sections where we have done modifications in the paper. 
+In particular, 
+1. we have added one new subsection which deals with the structure of the language and its code-generation/transformation;
+2. we have almost entirely re-written our future work section
+3. deleted the case-study section to make space for 1.
+4. added a figure to demonstrate the XML files and a listing to show the structure or grammar of CommonLang.
+
+We have also used an abbreviation for CommonLang (CoL, read "cool").
+
+Please see our reply and the new version of the paper, and let us know if you want us to do further modification to make the paper acceptable at MORSE 2018.
+
+Best regards
+Adrian Rutle et al.
+
+----------------------- REVIEW 1 ---------------------
+Overall evaluation: -2 (reject)
+----------- Overall evaluation -----------
+
+The Related Work shows some interesting frameworks, but lacks a clear distinction from the presented approach.
+
+>> We have now added distinction text to the related work. The main distinctive characteristic of CoL is its support for writing behavior for a heterogeneous environment of various kinds of robots. See section 2. To the best of our knowledge we could not see this explicit support in such as simple MDSE-based language the literature.
+
+The approach of CommonLang lacks scientific novelty, since a short search on google Scholar resulted in several frameworks presenting an similar approach, by providing an abstract modeling language alongside a code generation.  
+
+One example is “Modelling and Controlling of Behaviour for Autonomous Mobile Robots
+Authors” by Hendrik Skubch, which presents a domain independent framework for modeling behaviors for teams of autonomous mobile robots. Furthermore, this framework has been expanded by a tool which is able of generating code for plans and behaviours for robots.
+
+>> We are aware of multi-agent systems, swarm- and agent-technologies used for this kind of behavior specification, and the PhD thesis of Hendrik formally defines a (theoretical) logic language ALICA to specify behavior of multiple, heterogeneous agents. It has also features for assigning roles to agents based on their capabilities and agents to roles based on the situation. However, we could not find a software implementation of ALICA so we could not compare the approaches easily. Our work is rather a hands on implementation without much consideration of planning and verification of achievement of the desired goals of a mission. Retrieving a concrete plan from a general and abstract goal description and verifying that the robots would act as agents to reach the goal would be a very cool addition to our work, however, we believe this goes into another future direction and we would not be able to describe this in this workshop paper. Therefore, we added this work in the future work section rather than the related work.
+
+Further examples are "A Generated Property Specification Language for Resilient Multirobot Missions” by Swaib Dragule and 
+
+>> We are already citing one paper about FLYAQ. The relation between our work and the work by Di Ruscio et al is quite tight and we even know Patrizio (one of the founders of FLYAQ) quite well, however, our focus is explicitly on heterogeneity inside the same mission. The work in Dragule's paper is more in the direction of generating a property specification language for the missions for the purpose of verification. It also considers self-adaptation and adaptive systems during runtime. Again, we see this as a really cool feature which we should work towards in future, therefore we added this direction of study in the future work section.
+
+“Syntax Map: A Modeling Language for Capturing Requirements of Graphical DSML” by Hyun Cho. Both provide DSMLs with code generation to ease the use of robotic system.
+
+>> This paper is really interesting but it deals with the meta-process of and addresses challenges related to Graphical DSML definition. Although we could imagine how Syntax Map could be used as a method and a guideline in the creation of the CommonLang DSL, we could not find a concrete relation to robot programming in that particular paper. Therefore we did not add the paper in the related work section, but moved it as a citation where we mention DSML specification. Later on, following the advices form the second reviewer we renamed our work to currently (and more correctly) be a DSL, hence not much graphical modelling going on in CoL for the time being. Therefore, we added this to our future work when CoL becomes a DSML with a Graphical syntax (which should be easy due to compatibility of Xtext and Eclipse EMF).
+
+----------------------- REVIEW 2 ---------------------
+Overall evaluation: 0 (borderline paper)
+----------- Overall evaluation -----------
+
+What I miss though is a clear argumentation on what kind of model-driven techniques are central for this language. 
+To me, it is hard to grasp what makes CommonLang a DSML rather than a DSL. How does it differ from other platform-independent DSLs? The main difference between a DSML and a DSL is the level of abstraction where the language operates, and given the fact that the purpose of CommonLang is to write program code for robots (as stated by the authors), it sounds to me closer to a DSL than a DSML. Moreover, the authors themselves seem to address it as a DSL in some spots in the paper. 
+
+>> Action: We have renamed DSML to DSL
+
+Moreover, it is not entirely clear where and how model transformations come into the picture. Which parts of the transition from CommonLang to PLs are automated? Are they fully automated? 
+
+>> Transformation from the DSL code to C and Python via intermediate Java code. This is the code-generation step and it is automated. (see section 3.2)
+
+Are model transformations fixed or configurable?
+
+>> Yes, one can configure the transformation rules by tweaking the XML files. This is the answer if we correctly interpret the question. We could not see a clear difference between this question and the one on extensibility. Hence we elaborate more on the extension of the MT below.
+
+How were the transformations implemented? 
+
+>> Xtext comes with its own standard transformation language (Xtend). This creates an object model in Java for the CommonLang script. We have implemented a customized code-generators in Java, following Xtend methodology, which uses the objects to create the final robot scripts. This is now explained in more details in section 3.2.
+
+What is their complexity? 
+
+>> If complexity is meant in terms of performance analysis, the transformation steps are quite efficient for the cases we have tried. Not that we have done exhaustive experiments with our prototype, but for our simple cases it went so fast that the consumed time was negligible. However, if complexity was meant as the opposite of simplicity: the first step is quite simple and follows parsing and code generation patterns which Xtext offers. The second step, from Java to the robot scripts, is also quite simple as it only involves running a Java program and can be automated in a build script if desired. The writer of the CommonLang script should not interact with these steps anyways, so their "complexity" in this sense is hidden from the script developers. Some sentences on complexity is included in section 3.2.
+
+What is their level of extensibility (this applies to CommonLang too)? 
+
+>> One can change the transformations as one wants by using the Xtend templates or tweaking the Java program (we also interpret this question as the same as «configurability».) However, our design is that the user of the DSL should not worry about extending the transformation. The XML files which are defined for the robots can be configured in order to provide further functionalities as metamethods. This would provide extensibility wrt the transformations from the script developers' perspective.
+>> Yes, the language is extendable, as we show in section 4, we extend the language by adding support for communication. We could have done this in two ways, extending the meta model (grammar) of the language or add new metamethods. Also, new kinds of robots can be added, this could be done by implementing the interface CommonToLanguageParser. This is what we have done for Python (in CommonToPythonParser) and for Arduino/C (in CommonToCParser). The interface CommonToLanguageParser is provided by Xtext.
+>> We have added some clarification of these in section 3.2.
+
+Which transformation language has been used?
+
+>> The standard one which comes with Xtext, called Xtend, and Java. Xtend language takes the CommomLang script, parses it and creates an object model. We intervene in this step by implementing a parser for the two configuration XML files. Another Java program (one for each target language, e.g. C, Python, etc,) is responsible for creating the final robot scripts. 
+
+These represent important details in order for the reader to appreciate the potential of CommonLang in a model-driven engineering scenario.
+
+>> We have added more information about the transformations and have answered these questions in more details in the paper in section 3.1 and 3.2
+
+In the related work section, I miss a clear description of the relation (in terms of differences) between the presented approach and existing solutions.
+
+>> OK we will emphasize on the distinction and add more works as suggested by reviewer 1. See section 2.
+
+
+
+----------------------- REVIEW 3 ---------------------
+Overall evaluation: -1 (weak reject)
+----------- Overall evaluation -----------
+
+However, to the reader, it is not really clear how the metamethods are designed? Is there a specific scheme or convention? 
+>> We are expecting language designers to come up with these metamethods when they become necessary, for example, as mentioned in the paper, for enabling communication between robots or for including new robots (like the CrazyFlie minidrone). Note that the CrazyFlies could be added easily since it also uses Python as the MindStorm robot. See section 3.2 for a few sentences on this. We definitely plan to make guidelines and conventions for metamethod definition, the first step is to define metamodel for the two XML configuration files in the form of XSDs.
+
+What is the mechanism that enforces a common set of abilities by avoiding that different robotic platforms provide completely different metamethods?
+>> Robots may have and we expect them to have different abilities. These could be represented by different metamethods. Some of these might be common across robots, and some may not. In our current implementation, a metamethod that is not implemented for a robot X (but used in the CommonLang code) will be ignored in the code generation process for that target robot X. Hence commonalities are not enforced. Problems may arise when, for example, a piece of code is depending on a non-supported metamethod, however we trim the depending code also to make the final program valid. We include a short clarification of this right before section 3.1.
+
+At this point, and also when speaking of the assignment of "robot-dependent" configurations, the reader would greatly benefit from a visualization of the meta-model behind the DSL and the transformations that enable code generation for a specific platform. 
+>> The DSL has a grammar, we include an excerpt of it. We also include some details of the M2T transformation for the code generation. See Fig 3, Listing 1.1 and the corresponding explanations.
+
+Since the XML configuration seems to be important and is mentioned a lot, a snippet or meta-model would be greatly appreciated.
+>> We have included more information about the XML configuration and a figure explaining it, see Fig 3 and surrounding text.
+
+However, it is not really clear why incorporating the transport in the grammar instead of the XMLs would result in a smaller program code after the generation process?
+>> We could not re-establish this claim by testing the grammar-editing approach, therefore we deleted this claim.
+
+In section five a case study is presented with which the authors aim at evaluating the DSL from a different point of view. However, the case study does not seem to have anything to do with the DSL or the generation process. It only describes the robots and their behavior in an informal way. At the end of this section, qualitative results are states, such as "subjects could write scripts [..] with relative ease." etc... But the evaluation is unable to present the formal aspects necessary to perform such a study: E.g., how many subjects were there? What were the evaluation criterions? How do you measure "relative ease"?  What were the requirements of the assignment that needed to be fulfilled?
+The paper is concluded in section six by summarizing the main aspects of the approach. It is also stated that the evaluation of the case study in section five was performed to see "[..] to which degree [the authors] have reached the goals [..]". However, it is completely unclear what the exact goals have been since they are not explicitly stated. 
+
+>> We deleted the case-study section since it did not clarify the functionality of the DSL well enough. Also, we wanted to use the space for elaborating on the DSL grammar, the transformations and the XML configurations (since the reviewers have been asking for these explicitly). These additions can be seen in the new sections 3.1 and 3.2.
+
+In addition to that, it is also unclear how it is proven that adding functionality to the DSL in a "[..] package-like approach is possible"? In section five it is stated that: "The wireless communication extension could also have been made available as a module package [..]". This clearly tells the reader that it was not realized as a module package, and even if it would have been, the argumentation to use this as a proof would be very weak.
+
+>> We have reformulated this sentence in section 5 and argue now that the functionality is added as a library like approach.
+
+Furthermore, one last question remains: What exactly is the domain covered by the CommonLang DSL?
+
+>> This depends on the robots and the metamethods. The domain is any kind of operations which can be achieved by robots as long as there are metamethods implemented for the functionalities of the robots. We moved a paragraph from section 3 to the conclusion and added a sentence on the covered domains.
+
+Unfortunately, the manuscript seems to lack a lot of information, essential to understand and identify the extent of their actual contribution. 
+>> We are following the reviewers comments and add information about the DSL and the transformation. See among others, the new sections 3.1 and 3.2, and the additions made to related work in section 2.
+
+In addition to that, the case study is presented in a way that makes it rather irrelevant for this contribution. 
+
+>> This is now completely deleted.
+
+The paper would strongly benefit from a more clearly introduced approach (incl. how the generation process works) and a proper presentation of the case study with meets formal evaluation criteria.
+
+>> The case study is now deleted to make space for the presentation of the generation process.
